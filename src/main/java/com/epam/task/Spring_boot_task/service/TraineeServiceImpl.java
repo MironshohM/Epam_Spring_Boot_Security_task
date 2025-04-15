@@ -10,6 +10,7 @@ import com.epam.task.Spring_boot_task.exceptions.EntityNotFoundException;
 import com.epam.task.Spring_boot_task.exceptions.UnauthorizedAccessException;
 import com.epam.task.Spring_boot_task.repository.TraineeRepository;
 import com.epam.task.Spring_boot_task.repository.TrainerRepository;
+import com.epam.task.Spring_boot_task.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,15 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final TraineeConverter converter;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public TraineeServiceImpl(TraineeRepository traineeRepository, Generator generator, TrainerRepository trainerRepository, TraineeConverter converter) {
+    public TraineeServiceImpl(TraineeRepository traineeRepository, Generator generator, TrainerRepository trainerRepository, TraineeConverter converter, UserRepository userRepository) {
         this.traineeRepository = traineeRepository;
         this.generator = generator;
         this.trainerRepository = trainerRepository;
         this.converter = converter;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -100,10 +104,10 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public boolean deleteTrainee(Long id) {
-        if (!signed) {
-            logger.warn("Unauthorized delete attempt. User not logged in.");
-            return false;
-        }
+//        if (!signed) {
+//            logger.warn("Unauthorized delete attempt. User not logged in.");
+//            return false;
+//        }
         logger.info("Attempting to delete trainee with ID: {}", id);
         int deletedRows=traineeRepository.delete(id);
         if(deletedRows>0){
@@ -142,10 +146,10 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public boolean updateTraineePassword(String username, String oldPassword, String newPassword) {
-        if (!signed) { // Authentication check
-            logger.warn("Unauthorized access attempt! Please log in.");
-            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-        }
+//        if (!signed) { // Authentication check
+//            logger.warn("Unauthorized access attempt! Please log in.");
+//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
+//        }
 
         int updatedRows = traineeRepository.updatePassword(username, oldPassword, newPassword);
         if (updatedRows > 0) {
@@ -159,9 +163,9 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void updateTraineeStatus(String username, boolean isActive) {
-        if (!signed) {
-            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-        }
+//        if (!signed) {
+//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
+//        }
 
         int updatedRows = traineeRepository.updateActivationStatus(username, isActive);
         if (updatedRows == 0) {
@@ -171,23 +175,23 @@ public class TraineeServiceImpl implements TraineeService {
     }
     @Override
     public void deleteTraineeByUsername(String username) {
-        if (!signed) {
-            logger.warn("Unauthorized access attempt! Please log in.");
-            throw new UnauthorizedAccessException("Unauthorized access! Please log in.");
-        }
+//        if (!signed) {
+//            logger.warn("Unauthorized access attempt! Please log in.");
+//            throw new UnauthorizedAccessException("Unauthorized access! Please log in.");
+//        }
 
-        boolean deleted = traineeRepository.deleteTraineeByUsername(username);
+        int deletedCount = traineeRepository.deleteTraineeByUsername(username);
 
-        if (!deleted) {
+        if (deletedCount ==0) {
             throw new EntityNotFoundException("Trainee with username: " + username + " not found.");
         }
     }
 
     @Override
     public List<TrainingDto> getTraineeTrainings(TraineeTrainingRequestDto request) {
-        if (!signed) {
-            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-        }
+//        if (!signed) {
+//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
+//        }
 
         // Validate date range
         if (request.getPeriodFrom().isAfter(request.getPeriodTo())) {

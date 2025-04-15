@@ -153,7 +153,6 @@ public class TrainerController {
 
         TrainerProfileDto profileDto = trainerService.findTrainerProfileByUsername(username);
         logger.info("Successfully fetched profile for trainer: {}", username);
-
         endTransactionLogging();
         return ResponseEntity.ok(profileDto);
     }

@@ -4,6 +4,7 @@ package com.epam.task.Spring_boot_task.converter;
 import com.epam.task.Spring_boot_task.dtos.*;
 import com.epam.task.Spring_boot_task.entity.Trainer;
 import com.epam.task.Spring_boot_task.entity.Training;
+import com.epam.task.Spring_boot_task.entity.UserRole;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -23,22 +24,25 @@ public class TrainerConverter {
 
         trainer.setUsername(username);
         trainer.setPassword(password);
+        trainer.setActive(true);
+        trainer.setRoles(List.of(new UserRole("ROLE_TRAINER", trainer)));
+
         return trainer;
     }
 
     public TrainerProfileDto trainerToTrainerProfileDto(Trainer trainer){
         List<TraineeListDto> traineeDtos = trainer.getTrainees().stream()
                 .map(trainee -> new TraineeListDto(trainee.getUsername(), trainee.getFirstName(), trainee.getLastName()))
-                .collect(Collectors.toList());
+                .toList();
 
-        return new TrainerProfileDto(
-                trainer.getUsername(),
+        System.out.println(trainer.getUsername()+ " "+trainer.getFirstName()+" "+trainer.getLastName()+" "+trainer.getSpecialization()+" "+trainer.isActive());
+
+        return new TrainerProfileDto(trainer.getUsername(),
                 trainer.getFirstName(),
                 trainer.getLastName(),
                 trainer.getSpecialization(),
                 trainer.isActive(),
-                traineeDtos
-        );
+                traineeDtos);
     }
 
     public Trainer trainerProfileDtoToTrainer(TrainerUpdateDto updateDto, Trainer trainer){

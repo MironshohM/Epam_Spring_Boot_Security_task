@@ -2,14 +2,21 @@ package com.epam.task.Spring_boot_task.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 @Entity
 @Table(name = "trainers")
 public class Trainer extends User {
 
+    // Getters and Setters
+    @Getter
     @Column(nullable = false)
     private String specialization;
 
@@ -26,7 +33,7 @@ public class Trainer extends User {
 
 
     @ManyToOne
-    @JoinColumn(name = "training_type_id", nullable = false)
+    @JoinColumn(name = "training_type_id", nullable = true)
     private TrainingType trainingType;
 
     public Trainer(String trainer1, String password) {
@@ -38,30 +45,7 @@ public class Trainer extends User {
     }
 
 
-    public Set<Training> getTrainings() {
-        return trainings;
-    }
 
-    public void setTrainings(Set<Training> trainings) {
-        this.trainings = trainings;
-    }
-
-    // Getters and Setters
-    public String getSpecialization() {
-        return specialization;
-    }
-
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
-    }
-
-    public Set<Trainee> getTrainees() {
-        return trainees;
-    }
-
-    public void setTrainees(Set<Trainee> trainees) {
-        this.trainees = trainees;
-    }
 
     public void addTrainee(Trainee trainee) {
         this.trainees.add(trainee);
@@ -72,4 +56,6 @@ public class Trainer extends User {
         this.trainees.remove(trainee);
         trainee.getTrainers().remove(this);
     }
+
+
 }

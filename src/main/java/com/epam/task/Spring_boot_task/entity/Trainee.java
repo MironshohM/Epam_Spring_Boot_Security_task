@@ -9,21 +9,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Entity
-@Table(name = "trainees")
-public class Trainee extends User {
+    @Entity
+    @Table(name = "trainees")
+    public class Trainee extends User {
 
-    @Column(nullable = false)
-    private String trainingProgram;
+//        @Column(nullable = true)
+//        private String trainingProgram;
 
-    @Column(name = "date_of_birth", nullable = true)
-    private LocalDate dateOfBirth;
+        @Column(name = "date_of_birth", nullable = true)
+        private LocalDate dateOfBirth;
 
-    @Column(name = "address", nullable = true)
-    private String address;
+        @Column(name = "address", nullable = true)
+        private String address;
 
-    @ManyToMany(mappedBy = "trainees")
-    private List<Trainer> trainers = new ArrayList<>();
+        @ManyToMany(mappedBy = "trainees")
+        private List<Trainer> trainers = new ArrayList<>();
 
 
 
@@ -36,40 +36,39 @@ public class Trainee extends User {
 
     }
 
-    public Trainee(String trainingProgram, LocalDate dateOfBirth, List<Trainer> trainers, Set<Training> trainings) {
-        this.trainingProgram = trainingProgram;
+    public Trainee( LocalDate dateOfBirth, List<Trainer> trainers, Set<Training> trainings) {
+
         this.dateOfBirth = dateOfBirth;
         this.trainers = trainers;
         this.trainings = trainings;
     }
 
-    public Trainee(String trainingProgram, LocalDate dateOfBirth, String address, List<Trainer> trainers, Set<Training> trainings) {
-        this.trainingProgram = trainingProgram;
+    public Trainee( LocalDate dateOfBirth, String address, List<Trainer> trainers, Set<Training> trainings) {
+
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.trainers = trainers;
         this.trainings = trainings;
     }
 
-    public Trainee(String firstName, String lastName, String username, String password, boolean isActive, String trainingProgram, LocalDate dateOfBirth, String address, List<Trainer> trainers, Set<Training> trainings) {
+    public Trainee(String firstName, String lastName, String username, String password, boolean isActive,  LocalDate dateOfBirth, String address, List<Trainer> trainers, Set<Training> trainings) {
         super(firstName, lastName, username, password, isActive);
-        this.trainingProgram = trainingProgram;
+
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.trainers = trainers;
         this.trainings = trainings;
     }
 
-    public Trainee(String trainingProgram, List<Trainer> trainers, Set<Training> trainings, LocalDate dateOfBirth) {
-        this.trainingProgram = trainingProgram;
+    public Trainee( List<Trainer> trainers, Set<Training> trainings, LocalDate dateOfBirth) {
+
         this.trainers = trainers;
         this.trainings = trainings;
         this.dateOfBirth=dateOfBirth;
     }
 
-    public Trainee(String firstName, String lastName, String username, String password, boolean isActive, String trainingProgram, List<Trainer> trainers, Set<Training> trainings) {
+    public Trainee(String firstName, String lastName, String username, String password, boolean isActive, List<Trainer> trainers, Set<Training> trainings) {
         super(firstName, lastName, username, password, isActive);
-        this.trainingProgram = trainingProgram;
         this.trainers = trainers;
         this.trainings = trainings;
     }
@@ -99,13 +98,6 @@ public class Trainee extends User {
 
 
     // Getters and Setters
-    public String getTrainingProgram() {
-        return trainingProgram;
-    }
-
-    public void setTrainingProgram(String trainingProgram) {
-        this.trainingProgram = trainingProgram;
-    }
 
     public List<Trainer> getTrainers() {
         return trainers;

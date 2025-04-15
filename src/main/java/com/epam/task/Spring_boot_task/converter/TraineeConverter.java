@@ -4,6 +4,7 @@ import com.epam.task.Spring_boot_task.dtos.*;
 import com.epam.task.Spring_boot_task.entity.Trainee;
 import com.epam.task.Spring_boot_task.entity.Trainer;
 import com.epam.task.Spring_boot_task.entity.Training;
+import com.epam.task.Spring_boot_task.entity.UserRole;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,9 @@ public class TraineeConverter {
         trainee.setAddress(traineeDto.getAddress());
         trainee.setUsername(username);
         trainee.setPassword(password);
+        trainee.setActive(true);
+
+        trainee.setRoles(List.of(new UserRole("ROLE_TRAINEE",trainee)));
         return trainee;
     }
 

@@ -42,7 +42,7 @@ public interface TraineeRepository extends JpaRepository<Trainee,Long> {
     int updateActivationStatus(@Param("username") String username, @Param("active") boolean active);
 
     @Transactional
-    boolean deleteTraineeByUsername(String username);
+    int deleteTraineeByUsername(@Param("username") String username);
 
     Optional<Trainee> findByUsernameAndPassword(String username, String password);
 
