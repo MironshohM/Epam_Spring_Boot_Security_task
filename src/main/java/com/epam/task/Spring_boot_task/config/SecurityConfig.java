@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,9 +32,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/trainee").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/trainee/*").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/trainer/*").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/trainer").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/trainee/*").authenticated()
+//                        .requestMatchers(HttpMethod.GET, "/api/trainer/*").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginProcessingUrl("/api/login") // Where login form submits

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "trainers")
+@NoArgsConstructor
 public class Trainer extends User {
 
     // Getters and Setters
@@ -36,15 +38,9 @@ public class Trainer extends User {
     @JoinColumn(name = "training_type_id", nullable = true)
     private TrainingType trainingType;
 
-    public Trainer(String trainer1, String password) {
-        super(trainer1,password);
+    public Trainer(String username, String password) {
+        super(username,password);
     }
-
-    public Trainer() {
-
-    }
-
-
 
 
     public void addTrainee(Trainee trainee) {

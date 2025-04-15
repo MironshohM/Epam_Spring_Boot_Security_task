@@ -83,10 +83,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public boolean deleteTrainer(Long id) {
-//        if (!signed) {
-//            logger.warn("Unauthorized delete attempt. User not logged in.");
-//            return false;
-//        }
 
         logger.info("Attempting to delete Trainer with ID: {}", id);
 
@@ -146,9 +142,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public void updateTrainerStatus(String username, boolean isActive) {
-//        if (!signed) {
-//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-//        }
 
         int rowsUpdated = trainerRepository.updateActivationStatus(username, isActive);
 
@@ -161,10 +154,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public List<TrainerTrainingResponseDto> getTrainerTrainings(TrainerTrainingRequestDto request) {
-//        if (!signed) {
-//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-//        }
-
         // Validate date range
         if (request.getPeriodFrom().isAfter(request.getPeriodTo())) {
             throw new IllegalArgumentException("Invalid date range: periodFrom must be before periodTo.");
@@ -181,9 +170,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public List<TrainerDto> getUnassignedTrainers(String traineeUsername) {
-//        if (!signed) {
-//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-//        }
 
         // Check if trainee exists
         boolean traineeExists = trainerRepository.existsByUsername(traineeUsername);

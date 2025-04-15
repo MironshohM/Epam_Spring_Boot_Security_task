@@ -2,14 +2,18 @@ package com.epam.task.Spring_boot_task.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "training_type")
 @Immutable
+@NoArgsConstructor
 public class TrainingType {
 
     @Id
@@ -25,39 +29,4 @@ public class TrainingType {
     @OneToMany(mappedBy = "trainingType", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Trainer> trainers = new HashSet<>();
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTrainingTypeName() {
-        return trainingTypeName;
-    }
-
-    public void setTrainingTypeName(String trainingTypeName) {
-        this.trainingTypeName = trainingTypeName;
-    }
-
-    public Set<Training> getTrainings() {
-        return trainings;
-    }
-
-    public void setTrainings(Set<Training> trainings) {
-        this.trainings = trainings;
-    }
-
-    public Set<Trainer> getTrainers() {
-        return trainers;
-    }
-
-    public void setTrainers(Set<Trainer> trainers) {
-        this.trainers = trainers;
-    }
-
-    public TrainingType() {
-    }
 }

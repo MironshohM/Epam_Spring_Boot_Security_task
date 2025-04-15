@@ -35,15 +35,13 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final TraineeConverter converter;
 
-    private final UserRepository userRepository;
 
     @Autowired
-    public TraineeServiceImpl(TraineeRepository traineeRepository, Generator generator, TrainerRepository trainerRepository, TraineeConverter converter, UserRepository userRepository) {
+    public TraineeServiceImpl(TraineeRepository traineeRepository, Generator generator, TrainerRepository trainerRepository, TraineeConverter converter) {
         this.traineeRepository = traineeRepository;
         this.generator = generator;
         this.trainerRepository = trainerRepository;
         this.converter = converter;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -66,6 +64,7 @@ public class TraineeServiceImpl implements TraineeService {
         logger.info("User logged out successfully.");
     }
 
+
     @Override
     public Trainee saveTrainee(TraineeDto traineeDto) {
         logger.info("Attempting to save trainee: {}", traineeDto);
@@ -74,6 +73,7 @@ public class TraineeServiceImpl implements TraineeService {
         if (traineeDto.getFirstName() == null || traineeDto.getLastName() == null) {
             throw new IllegalArgumentException("First name and last name are required!");
         }
+
         // Generate username & password for new trainees
         int serialNumber = traineeRepository.getExistingUserCount(traineeDto.getFirstName(), traineeDto.getLastName());
         String username = generator.generateUsername(traineeDto.getFirstName(), traineeDto.getLastName(), serialNumber);
@@ -104,10 +104,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public boolean deleteTrainee(Long id) {
-//        if (!signed) {
-//            logger.warn("Unauthorized delete attempt. User not logged in.");
-//            return false;
-//        }
         logger.info("Attempting to delete trainee with ID: {}", id);
         int deletedRows=traineeRepository.delete(id);
         if(deletedRows>0){
@@ -146,10 +142,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public boolean updateTraineePassword(String username, String oldPassword, String newPassword) {
-//        if (!signed) { // Authentication check
-//            logger.warn("Unauthorized access attempt! Please log in.");
-//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-//        }
 
         int updatedRows = traineeRepository.updatePassword(username, oldPassword, newPassword);
         if (updatedRows > 0) {
@@ -163,9 +155,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void updateTraineeStatus(String username, boolean isActive) {
-//        if (!signed) {
-//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-//        }
 
         int updatedRows = traineeRepository.updateActivationStatus(username, isActive);
         if (updatedRows == 0) {
@@ -175,10 +164,6 @@ public class TraineeServiceImpl implements TraineeService {
     }
     @Override
     public void deleteTraineeByUsername(String username) {
-//        if (!signed) {
-//            logger.warn("Unauthorized access attempt! Please log in.");
-//            throw new UnauthorizedAccessException("Unauthorized access! Please log in.");
-//        }
 
         int deletedCount = traineeRepository.deleteTraineeByUsername(username);
 
@@ -189,10 +174,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public List<TrainingDto> getTraineeTrainings(TraineeTrainingRequestDto request) {
-//        if (!signed) {
-//            throw new UnauthorizedAccessException("Unauthorized access attempt! Please log in.");
-//        }
-
         // Validate date range
         if (request.getPeriodFrom().isAfter(request.getPeriodTo())) {
             throw new IllegalArgumentException("Invalid date range: periodFrom must be before periodTo.");

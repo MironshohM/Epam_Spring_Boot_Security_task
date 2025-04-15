@@ -1,11 +1,15 @@
 package com.epam.task.Spring_boot_task.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "user_role")
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRole {
 
     @Id
@@ -19,7 +23,6 @@ public class UserRole {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public UserRole() {}
     public UserRole(String role, User user) {
         this.role = role;
         this.user = user;

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -50,8 +49,6 @@ public  class User {
         this.isActive = isActive;
     }
 
-
-
     public boolean isActive() {
         return isActive;
     }
@@ -59,7 +56,6 @@ public  class User {
     public void setActive(boolean active) {
         isActive = active;
     }
-
     @Override
     public String toString() {
         return "User{" +
