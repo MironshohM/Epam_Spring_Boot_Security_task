@@ -1,5 +1,6 @@
 package com.epam.task.Spring_boot_task.config;
 
+import com.epam.task.Spring_boot_task.filter.JwtAuthFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,9 +11,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
@@ -22,26 +25,27 @@ public class SecurityConfig {
 
     private final DataSource dataSource;
 
+    private final JwtAuthFilter jwtAuthFilter;
+
     @Autowired
-    public SecurityConfig(DataSource dataSource) {
+    public SecurityConfig(DataSource dataSource, JwtAuthFilter jwtAuthFilter) {
         this.dataSource = dataSource;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/trainee").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/trainer").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/trainee/*").authenticated()
-//                        .requestMatchers(HttpMethod.GET, "/api/trainer/*").authenticated()
+                        .requestMatchers("/api/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginProcessingUrl("/api/login") // Where login form submits
-                        .defaultSuccessUrl("/api/home", false) // Where to go after successful login
-                        .permitAll()
-                )
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
                         .logoutUrl("/api/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
@@ -52,10 +56,9 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                .csrf(AbstractHttpConfigurer::disable);
-
-        return http.build();
+                .build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, DataSource dataSource) throws Exception {
@@ -73,4 +76,38 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+
+
+
+    //    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(HttpMethod.POST, "/api/trainee").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/trainer").permitAll()
+////                        .requestMatchers(HttpMethod.GET, "/api/trainee/*").authenticated()
+////                        .requestMatchers(HttpMethod.GET, "/api/trainer/*").authenticated()
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(form -> form
+//                        .loginProcessingUrl("/api/login") // Where login form submits
+//                        .defaultSuccessUrl("/api/home", false) // Where to go after successful login
+//                        .permitAll()
+//                )
+//                .logout(logout -> logout
+//                        .logoutUrl("/api/logout")
+//                        .logoutSuccessHandler((request, response, authentication) -> {
+//                            response.setStatus(HttpServletResponse.SC_OK);
+//                            response.getWriter().write("{\"message\": \"Logout successful\"}");
+//                        })
+//                        .invalidateHttpSession(true)
+//                        .deleteCookies("JSESSIONID")
+//                        .permitAll()
+//                )
+//                .csrf(AbstractHttpConfigurer::disable);
+//
+//        return http.build();
+//    }
 }
