@@ -2,6 +2,7 @@ package com.epam.task.Spring_boot_task.controller;
 
 import com.epam.task.Spring_boot_task.dtos.LoginResponse;
 import com.epam.task.Spring_boot_task.dtos.UserDto;
+import com.epam.task.Spring_boot_task.service.LoginAttemptService;
 import com.epam.task.Spring_boot_task.util.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +23,39 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final LoginAttemptService loginAttemptService;
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public LoginController(AuthenticationManager authenticationManager,
+                           JwtUtil jwtUtil,
+                           LoginAttemptService loginAttemptService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.loginAttemptService = loginAttemptService;
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserDto userDto) {
+        String username = userDto.getUsername();
+
+        if (loginAttemptService.isBlocked(username)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body("User is temporarily blocked due to multiple failed login attempts. Try again later.");
+        }
+
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword())
+                    new UsernamePasswordAuthenticationToken(username, userDto.getPassword())
             );
 
-            String token = jwtUtil.generateToken(userDto.getUsername());
+            loginAttemptService.loginSucceeded(username);
 
+            String token = jwtUtil.generateToken(username);
             return ResponseEntity.ok(new LoginResponse(token));
+
         } catch (BadCredentialsException e) {
+            loginAttemptService.loginFailed(username);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
