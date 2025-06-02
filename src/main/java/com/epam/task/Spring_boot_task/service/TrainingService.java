@@ -13,4 +13,6 @@ public interface TrainingService {
 
     List<TrainingTypeDto> getAllTrainingTypes();
 
+    boolean deleteTraining(String traineeUsername, String trainerUsername);
+
 }

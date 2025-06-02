@@ -4,6 +4,7 @@ package com.epam.task.Spring_boot_task.service;
 
 import com.epam.task.Spring_boot_task.dtos.*;
 import com.epam.task.Spring_boot_task.entity.Trainer;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,4 +35,6 @@ public interface TrainerService {
     List<TrainerDto> getUnassignedTrainers(String traineeUsername);
 
     List<TrainerTrainingResponseDto> getTrainerTrainings(TrainerTrainingRequestDto request);
+
+    ResponseEntity<MonthlySummaryDTO> getMonthlySummary(String username, int year, int month);
 }

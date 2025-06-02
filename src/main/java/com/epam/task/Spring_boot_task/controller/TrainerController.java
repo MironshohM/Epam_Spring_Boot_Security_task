@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
@@ -272,4 +273,31 @@ public class TrainerController {
         endTransactionLogging();
         return ResponseEntity.ok(message);
     }
+
+
+    @Operation(
+            summary = "Get Monthly Training Summary",
+            description = "Retrieves the total training duration for a trainer for a specific year and month.",
+            tags = { "Trainer", "get" }
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Monthly summary retrieved successfully",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Trainer or summary not found",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/trainer/summary/{username}/{year}/{month}")
+    public ResponseEntity<MonthlySummaryDTO> getTrainerMonthlySummary(
+            @PathVariable String username,
+            @PathVariable int year,
+            @PathVariable int month) {
+
+        try {
+            return trainerService.getMonthlySummary(username, year, month);
+        } catch (Exception e) {
+            logger.error("Failed to retrieve summary for trainer: {}", username, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

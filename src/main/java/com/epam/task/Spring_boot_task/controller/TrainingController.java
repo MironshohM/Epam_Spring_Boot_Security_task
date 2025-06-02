@@ -78,6 +78,40 @@ public class TrainingController {
     }
 
 
+    @Operation(
+            summary = "Delete an existing Training",
+            description = "Removes a training session between a trainee and a trainer.",
+            tags = { "Training", "delete" }
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Training deleted successfully",
+                    content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "400", description = "Failed to delete training",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @DeleteMapping("/training")
+    public ResponseEntity<String> deleteTraining(@RequestBody @Valid AddTrainingRequestDto request) {
+        String transactionId = UUID.randomUUID().toString();
+        MDC.put("transactionId", transactionId);
+
+        try {
+            logger.info("TransactionID: {} - Received request to delete training: {}", transactionId, request);
+
+            boolean success = trainingService.deleteTraining(request.getTraineeUsername(), request.getTrainerUsername());
+
+            if (success) {
+                logger.info("TransactionID: {} - Training deleted successfully", transactionId);
+                return ResponseEntity.ok("Training deleted successfully");
+            } else {
+                logger.warn("TransactionID: {} - Failed to delete training", transactionId);
+                return ResponseEntity.badRequest().body("Failed to delete training");
+            }
+        } finally {
+            MDC.clear();
+        }
+    }
+
+
     // Ex: 17 - Get Training Types
     @Operation(
             summary = "Get all training types",

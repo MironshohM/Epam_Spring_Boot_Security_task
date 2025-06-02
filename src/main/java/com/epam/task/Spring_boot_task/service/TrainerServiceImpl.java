@@ -6,12 +6,14 @@ import com.epam.task.Spring_boot_task.dtos.*;
 import com.epam.task.Spring_boot_task.entity.Trainer;
 import com.epam.task.Spring_boot_task.entity.Training;
 import com.epam.task.Spring_boot_task.exceptions.UnauthorizedAccessException;
+import com.epam.task.Spring_boot_task.feign.TrainerWorkloadService;
 import com.epam.task.Spring_boot_task.repository.TrainerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @Profile("dev")
 public class TrainerServiceImpl implements TrainerService {
 
+    private final TrainerWorkloadService trainerWorkloadService;
     private final TrainerConverter converter;
     private static boolean signed = false;
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
@@ -30,7 +33,8 @@ public class TrainerServiceImpl implements TrainerService {
     private final Generator generator;
 
     @Autowired
-    public TrainerServiceImpl(TrainerConverter converter, TrainerRepository trainerRepository, Generator generator) {
+    public TrainerServiceImpl(TrainerWorkloadService trainerWorkloadService, TrainerConverter converter, TrainerRepository trainerRepository, Generator generator) {
+        this.trainerWorkloadService = trainerWorkloadService;
         this.converter = converter;
         this.trainerRepository = trainerRepository;
         this.generator = generator;
@@ -183,6 +187,17 @@ public class TrainerServiceImpl implements TrainerService {
         List<Trainer> unassignedTrainers = trainerRepository.getUnassignedTrainers(traineeUsername);
         return converter.trainersToTrainerDtos(unassignedTrainers);
 
+    }
+
+    public ResponseEntity<MonthlySummaryDTO> getMonthlySummary(String username, int year, int month) {
+        logger.info("Fetching monthly training summary for: {} - {}/{}", username, month, year);
+
+        try {
+            return trainerWorkloadService.getMonthlySummary(username, year, month);
+        } catch (Exception e) {
+            logger.error("Error fetching summary from summary microservice", e);
+            throw new RuntimeException("Unable to fetch summary from workload service");
+        }
     }
 
 }
