@@ -5,7 +5,6 @@ import com.epam.task.Spring_boot_task.converter.TrainerConverter;
 import com.epam.task.Spring_boot_task.dtos.*;
 import com.epam.task.Spring_boot_task.entity.Trainer;
 import com.epam.task.Spring_boot_task.entity.Training;
-import com.epam.task.Spring_boot_task.exceptions.UnauthorizedAccessException;
 import com.epam.task.Spring_boot_task.feign.TrainerWorkloadService;
 import com.epam.task.Spring_boot_task.repository.TrainerRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -189,6 +188,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     }
 
+    @Override
     public ResponseEntity<MonthlySummaryDTO> getMonthlySummary(String username, int year, int month) {
         logger.info("Fetching monthly training summary for: {} - {}/{}", username, month, year);
 
