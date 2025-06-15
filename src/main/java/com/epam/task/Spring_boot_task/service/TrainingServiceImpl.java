@@ -32,14 +32,18 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingRepository trainingRepository;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
-    private final TrainerWorkloadService trainerWorkloadService;
+    private final TrainingEventPublisher trainingEventPublisher;
+
+//    Feign client for trainer workload service
+//    private final TrainerWorkloadService trainerWorkloadService;
 
     @Autowired
-    public TrainingServiceImpl(TrainingRepository trainingRepository, TraineeRepository traineeRepository, TrainerRepository trainerRepository, TrainerWorkloadService trainerWorkloadService) {
+    public TrainingServiceImpl(TrainingRepository trainingRepository, TraineeRepository traineeRepository, TrainerRepository trainerRepository, TrainingEventPublisher trainingEventPublisher) {
         this.trainingRepository = trainingRepository;
         this.traineeRepository = traineeRepository;
         this.trainerRepository = trainerRepository;
-        this.trainerWorkloadService = trainerWorkloadService;
+//        this.trainerWorkloadService = trainerWorkloadService;
+        this.trainingEventPublisher = trainingEventPublisher;
     }
 
     @Transactional
@@ -84,10 +88,10 @@ public class TrainingServiceImpl implements TrainingService {
         );
 
         try {
-            trainerWorkloadService.updateWorkload(event);
-            logger.info("Trainer workload updated successfully in summary service");
+            trainingEventPublisher.publishTrainingEvent(event);
+            logger.info("Trainer workload published successfully in summary service");
         } catch (Exception e) {
-            logger.error("Failed to update trainer workload in summary service", e);
+            logger.error("Failed to publish trainer workload in summary service", e);
             // Optionally rethrow or suppress depending on criticality
         }
 
@@ -124,10 +128,10 @@ public class TrainingServiceImpl implements TrainingService {
         );
 
         try {
-            trainerWorkloadService.updateWorkload(event);
-            logger.info("Trainer workload updated successfully in summary service (DELETE)");
+            trainingEventPublisher.publishTrainingEvent(event);
+            logger.info("Trainer workload published successfully in summary service (DELETE)");
         } catch (Exception e) {
-            logger.error("Failed to update trainer workload in summary service (DELETE)", e);
+            logger.error("Failed to published trainer workload in summary service (DELETE)", e);
         }
 
         return true;

@@ -5,6 +5,7 @@ package com.epam.task.Spring_boot_task.controller;
 import com.epam.task.Spring_boot_task.dtos.*;
 import com.epam.task.Spring_boot_task.entity.Trainer;
 import com.epam.task.Spring_boot_task.exceptions.InvalidLoginException;
+import com.epam.task.Spring_boot_task.service.MonthlySummaryRequester;
 import com.epam.task.Spring_boot_task.service.TrainerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,10 +33,12 @@ public class TrainerController {
 
     private static final Logger logger = LoggerFactory.getLogger(TrainerController.class);
     private final TrainerService trainerService;
+    private final MonthlySummaryRequester monthlySummaryRequester;
 
     @Autowired
-    public TrainerController(TrainerService trainerService) {
+    public TrainerController(TrainerService trainerService, MonthlySummaryRequester monthlySummaryRequester) {
         this.trainerService = trainerService;
+        this.monthlySummaryRequester = monthlySummaryRequester;
     }
 
     private void startTransactionLogging() {
@@ -293,7 +296,7 @@ public class TrainerController {
             @PathVariable int month) {
 
         try {
-            return trainerService.getMonthlySummary(username, year, month);
+            return new ResponseEntity<>(monthlySummaryRequester.requestMonthlySummary(username, year, month), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Failed to retrieve summary for trainer: {}", username, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
