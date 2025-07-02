@@ -1,10 +1,12 @@
 package com.epam.task.Spring_boot_task.dtos;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 public class TrainingSessionEventDTO {
     private String username;
     private String firstName;
